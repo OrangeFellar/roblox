@@ -1,3 +1,4 @@
+video: https://www.youtube.com/watch?v=ljP_oXMd_8U
 CarrotManager:
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
