@@ -1,0 +1,132 @@
+LeaderStats:
+local DataStoreService = game:GetService("DataStoreService")
+local myDataStore = DataStoreService:GetDataStore("myDataStore")
+
+
+game.Players.PlayerAdded:Connect(function(player)
+	local leaderstats = Instance.new("Folder")
+	leaderstats.Name = "leaderstats"
+	leaderstats.Parent = player
+
+	local Size = Instance.new("IntValue")
+	Size.Name = "Size"
+	Size.Parent = leaderstats
+	
+	local Cash = Instance.new("IntValue")
+	Cash.Name = "Cash"
+	Cash.Parent = leaderstats
+
+	local playerUserId = "Player"..player.UserId
+
+	local data 
+
+	local success, errormessage = pcall(function()
+		data = myDataStore:GetAsync(playerUserId) 
+	end)
+
+
+	if success then
+		--Size.Value = data
+		Cash.Value = data
+	end
+
+	
+end)
+
+game.Players.PlayerRemoving:Connect(function(player)
+	local playerUserId = "Player"..player.UserId
+
+	local leavedata = player.leaderstats.Cash.Value
+
+	myDataStore:SetAsync(playerUserId, leavedata)           
+
+end)
+----------------------------------------------------
+randomSpawns:
+while true do
+	wait(0.01)
+	
+	local children = game.ServerStorage.Spawns:GetChildren()
+	local randomChild = children[math.random(1, #children)]
+	
+	
+	
+
+
+
+function SpawnItem()
+	local newItem = randomChild:Clone()
+	
+
+	newItem.CFrame = CFrame.new(math.random(1,500), 1, math.random(1,500))
+
+	newItem.Parent = workspace
+end
+
+	SpawnItem()
+	
+end
+-----------------------------------------
+spawnColor:
+
+local Players = game:GetService("Players")
+
+Players.PlayerAdded:Connect(function(player)
+	player.CharacterAdded:Connect(function(character)
+		local humanoidPart = character:WaitForChild("HumanoidRootPart")
+		if humanoidPart then
+			humanoidPart.Color = Color3.new(math.random(), math.random(), math.random())
+		end
+	end)
+end)
+
+--------------------------------------------
+StatAdder:
+local player = game.Players:GetPlayerFromCharacter(script.Parent)
+if not player then
+	return
+end
+
+local function onCharacterAdded(character)
+	print("Inside StatAdder")
+
+	local Size = player.leaderstats:WaitForChild("Size")
+	local Cash = player.leaderstats:WaitForChild("Cash")
+
+	local function onTouch(otherPart)
+		if otherPart.Name == "SizePart" then
+			print("touched")
+			
+			local randomIncrease = math.random(3, 10) / 100 
+
+			
+			Size.Value = Size.Value + randomIncrease * 100 
+			Cash.Value = Cash.Value + randomIncrease * 100
+			local humanoidRootPart = script.Parent:WaitForChild("HumanoidRootPart")
+
+			
+			local currentSize = humanoidRootPart.Size
+			humanoidRootPart.Size = Vector3.new(currentSize.X + randomIncrease, currentSize.Y + randomIncrease, currentSize.Z + randomIncrease)
+
+
+
+		else
+			return
+		end
+	end
+
+	local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+	humanoidRootPart.Touched:Connect(onTouch)
+end
+
+local function onCharacterRemoving()
+	player.CharacterAdded:Disconnect()
+end
+
+player.CharacterAdded:Connect(onCharacterAdded)
+player.CharacterRemoving:Connect(onCharacterRemoving)
+
+if player.Character then
+	onCharacterAdded(player.Character)
+end
+
